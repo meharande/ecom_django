@@ -1,0 +1,12 @@
+Django==5.0
+djangorestframework
+psycopg2-binary
+django-environ
+redis
+celery
+django-cors-headers
+djangorestframework-simplejwt
+drf-spectacular
+structlog
+pytest
+pytest-django
