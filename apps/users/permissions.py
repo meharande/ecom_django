@@ -99,6 +99,8 @@ def check_permission(
 
     return False
 
+    return False
+
 
 class HasPermission(BasePermission):
     def has_permission(self, request, view):
@@ -111,13 +113,29 @@ class HasPermission(BasePermission):
             elif method == "post":
                 action = "create"
             elif method in ("put", "patch"):
-                action = "update"
+                # For update, defer to object-level permission check
+                return True
             elif method == "delete":
-                action = "delete"
+                # For delete, defer to object-level permission check
+                return True
             else:
                 action = method
 
         return check_permission(request.user, resource=resource, action=action)
+
+    def has_object_permission(self, request, view, obj):
+        resource = getattr(view, "permission_resource", None) or getattr(view, "basename", None)
+        action = getattr(view, "permission_action", None)
+        if not action:
+            method = request.method.lower()
+            if method in ("put", "patch"):
+                action = "update"
+            elif method == "delete":
+                action = "delete"
+            else:
+                action = "view"  # fallback
+
+        return check_permission(request.user, resource=resource, action=action, obj=obj)
 
 
 class ProductUpdatePermission(BasePermission):

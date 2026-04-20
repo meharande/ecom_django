@@ -3,6 +3,12 @@ import pytest
 
 @pytest.mark.django_db
 def test_create_product_with_nested_skus(client, django_user_model):
+    # Register permissions and policies
+    from apps.products.policies import register_all as register_products
+    from apps.users.policies import register_all as register_users
+    register_products()
+    register_users()
+
     user = django_user_model.objects.create_user(
         email="owner2@example.com", password="pass"
     )
@@ -20,6 +26,15 @@ def test_create_product_with_nested_skus(client, django_user_model):
     subcat = Subcategory.objects.create(category=category, name="Sub2", creator=user)
     brand = Brand.objects.create(name="BrandY", slug="brandy", creator=user)
 
+    # Login to get access token
+    login_resp = client.post(
+        "/api/auth/login/",
+        {"email": "owner2@example.com", "password": "pass"},
+        content_type="application/json"
+    )
+    assert login_resp.status_code == 200
+    access_token = login_resp.json()["access"]
+
     payload = {
         "owner": user.id,
         "subcategory": subcat.id,
@@ -36,7 +51,12 @@ def test_create_product_with_nested_skus(client, django_user_model):
         ],
     }
 
-    resp = client.post("/api/products/", data=payload, content_type="application/json")
+    resp = client.post(
+        "/api/products/",
+        data=payload,
+        content_type="application/json",
+        headers={"Authorization": f"Bearer {access_token}"}
+    )
     assert resp.status_code == 201
     data = resp.json()
     assert data["name"] == "Nested Product"

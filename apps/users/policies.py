@@ -1,25 +1,22 @@
 from apps.users.models import Permission, Policy as PolicyModel
 
 RESOURCES = [
-    "menu",
-    "brand",
-    "category",
-    "subcategory",
-    "product",
-    "sku",
-    "sku_image",
+    "permission",
+    "role",
+    "userrole",
+    "user",
 ]
 
 STANDARD_ACTIONS = ["list", "view", "create", "update", "delete"]
 
 # Default ABAC policies (resource, action) -> condition list
 DEFAULT_POLICIES = {
-        ("product", "view"): [],
-        ("product", "create"): [],
-        ("product", "update"): [{"field": "owner.id", "op": "eq", "value": "user.id"}],
-        ("product", "delete"): [{"field": "owner.id", "op": "eq", "value": "user.id"}],
-        ("sku", "update"): [{"field": "product.owner.id", "op": "eq", "value": "user.id"}],
-        ("sku", "delete"): [{"field": "product.owner.id", "op": "eq", "value": "user.id"}],
+        ("user", "update"): [{"field": "id", "op": "eq", "value": "user.id"}],
+        ("user", "delete"): [{"field": "id", "op": "eq", "value": "user.id"}],
+        ("userrole", "update"): [{"field": "user.id", "op": "eq", "value": "user.id"}],
+        ("userrole", "delete"): [{"field": "user.id", "op": "eq", "value": "user.id"}],
+        ("permission", "update"): [{"field": "id", "op": "eq", "value": "user.id"}],
+        ("permission", "delete"): [{"field": "id", "op": "eq", "value": "user.id"}],
 }
 
 

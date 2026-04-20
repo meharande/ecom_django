@@ -58,7 +58,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
         # Get direct user permissions
         user_perms = Permission.objects.filter(
-            userpermission_user=self
+            userpermission__user=self
         ).values_list("code", flat=True)
 
         perms = set(role_perms) | set(user_perms)

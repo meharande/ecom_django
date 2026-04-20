@@ -51,3 +51,22 @@ class ProductCreateSerializer(serializers.ModelSerializer):
                     SKUImage.objects.create(sku=sku, creator=owner, **img)
 
         return product
+
+
+class ProductUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for updating products (without nested SKUs for simplicity)."""
+
+    class Meta:
+        model = Product
+        fields = ["subcategory", "brand", "name"]
+        # Note: owner is not updatable for security reasons
+
+
+class ProductDeleteSerializer(serializers.Serializer):
+    """Serializer for delete confirmation (could include reason field if needed)."""
+    confirm_delete = serializers.BooleanField(required=True)
+
+    def validate_confirm_delete(self, value):
+        if not value:
+            raise ValidationError("Deletion must be confirmed")
+        return value
