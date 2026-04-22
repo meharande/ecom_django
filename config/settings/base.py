@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.users",
     "apps.products",
+    "apps.orders",
 ]
 
 MIDDLEWARE = [
@@ -196,3 +197,10 @@ CELERY_BROKER_URL = env(
 CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default="redis://redis:6379/0")
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
+
+CELERY_BEAT_SCHEDULE = {
+    "expire-reservations-every-minute": {
+        "task": "apps.orders.tasks.expire_reservations",
+        "schedule": 60.0,
+    },
+}

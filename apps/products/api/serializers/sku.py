@@ -10,7 +10,7 @@ class SKUSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SKU
-        fields = ["sku_code", "price", "stock", "attributes", "images"]
+        fields = ["id","sku_code", "price", "stock", "attributes", "images"]
 
     def validate(self, attrs):
         if attrs.get("stock") < 0:
